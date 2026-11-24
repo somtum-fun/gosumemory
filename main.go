@@ -55,10 +55,7 @@ func main() {
 	go web.SetupStructure()
 	go web.SetupRoutes()
 	if !cgo {
-		go pp.GetData()
-		go pp.GetFCData()
-		go pp.GetMaxData()
-		go pp.GetEditorData()
+		go pp.GetData() // somtum-pp: live, if-FC, max-this-play and editor pp in one loop
 	}
 	web.HTTPServer()
 
