@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
-	"regexp"
 	"runtime"
 	"strings"
 	"time"
@@ -16,7 +15,6 @@ import (
 	"github.com/spf13/cast"
 )
 
-var osuProcessRegex = regexp.MustCompile(`.*osu!\.exe.*`)
 var patterns staticAddresses
 var tourneyPatterns []staticAddresses
 var tourneySpecificPatterns []tourneyStaticAddresses
@@ -43,7 +41,10 @@ func resolveSongsFolder() (string, error) {
 		time.Sleep(5 * time.Second)
 		return "", errors.New("osu! executable was not found")
 	}
-	rootFolder := strings.TrimSuffix(osuExecutablePath, "osu!.exe")
+	rootFolder := filepath.Dir(osuExecutablePath)
+	if dataDir := somtumDataDir(process, rootFolder); dataDir != "" {
+		rootFolder = dataDir // Somtum.Client outside the osu! folder
+	}
 	songsFolder := filepath.Join(rootFolder, "Songs")
 	if songsFolderData.SongsFolder == "Songs" || songsFolderData.SongsFolder == "CompatibilityContext" { //dirty hack to fix old stable offset
 		return songsFolder, nil
@@ -58,6 +59,7 @@ func initBase() error {
 	if err != nil {
 		return err
 	}
+	allProcs = pinnedProcess(allProcs)
 	process = allProcs[0]
 
 	err = mem.ResolvePatterns(process, &patterns.PreSongSelectAddresses)
@@ -91,6 +93,9 @@ func initBase() error {
 		panic(err)
 	}
 	SettingsData.Folders.Game = filepath.Dir(pepath)
+	if dataDir := somtumDataDir(process, SettingsData.Folders.Game); dataDir != "" {
+		SettingsData.Folders.Game = dataDir // Somtum.Client outside the osu! folder
+	}
 
 	if menuData.PreSongSelectData.Status == 22 || len(allProcs) > 1 {
 		fmt.Println("[MEMORY] Operating in tournament mode!")
@@ -118,7 +123,7 @@ func initBase() error {
 			}
 			fmt.Println(fmt.Sprintf("[MEMORY] Got osu!status addr for client #%d...", i))
 			fmt.Println(fmt.Sprintf("[MEMORY] Resolving patterns for client #%d...", i))
-			err = mem.ResolvePatterns(proc, &tourneyPatterns[i])
+			err = resolveAllPatterns(proc, &tourneyPatterns[i])
 			if err != nil {
 				return err
 			}
@@ -131,7 +136,7 @@ func initBase() error {
 	}
 
 	fmt.Println("[MEMORY] Resolving patterns...")
-	err = mem.ResolvePatterns(process, &patterns)
+	err = resolveAllPatterns(process, &patterns)
 	if err != nil {
 		return err
 	}

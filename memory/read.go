@@ -22,6 +22,9 @@ type staticAddresses struct {
 	SkinData    int64 `sig:"75 21 8B 1D"`
 	Rulesets    int64 `sig:"7D 15 A1 ?? ?? ?? ?? 85 C0"`
 	ChatArea    int64 `sig:"33 47 9D FF 5B 7F FF FF"`
+	// Address of the operand holding Player.mode's address: Base - 0x33 on osu!stable, set by
+	// resolveAllPatterns (Somtum.Client differs).
+	PlayerMode int64
 }
 
 type tourneyStaticAddresses struct {
@@ -82,8 +85,8 @@ type menuD struct {
 	PreSongSelectData
 	//SearchText         string  `mem:"[Ruleset + 0xCC]"`
 	//GroupingType       int32   `mem:"Ruleset + 0x104"`
-	MenuGameMode       int32   `mem:"[Base - 0x33]"`
-	Plays              int32   `mem:"[Base - 0x33] + 0xC"`
+	MenuGameMode       int32   `mem:"[PlayerMode]"`
+	Plays              int32   `mem:"[PlayerMode] + 0xC"`
 	Artist             string  `mem:"[[Beatmap] + 0x18]"`
 	ArtistOriginal     string  `mem:"[[Beatmap] + 0x1C]"`
 	Title              string  `mem:"[[Beatmap] + 0x24]"`
@@ -126,26 +129,28 @@ type allTimesD struct {
 	SkinFolder    string `mem:"[[[SkinData + 4] + 0] + 68]"`
 	ShowInterface int8   `mem:"[Settings + 0x4] + 0xC"`
 }
+// Ruleset offsets as osu!stable has them since 2024 (0x64 gameplay, 0x78 leaderboard, 0xAC key
+// overlay, 0xF8 score v2), the same as tosu reads; the 2023 values were 4 bytes further on.
 type gameplayD struct {
-	Retries             int32   `mem:"[Base - 0x33] + 0x8"`
-	PlayerName          string  `mem:"[[[Ruleset + 0x68] + 0x38] + 0x28]"`
-	ModsXor1            int32   `mem:"[[[Ruleset + 0x68] + 0x38] + 0x1C] + 0xC"`
-	ModsXor2            int32   `mem:"[[[Ruleset + 0x68] + 0x38] + 0x1C] + 0x8"`
-	HitErrors           []int32 `mem:"[[[Ruleset + 0x68] + 0x38] + 0x38]"`
-	Mode                int32   `mem:"[[Ruleset + 0x68] + 0x38] + 0x64"`
-	MaxCombo            int16   `mem:"[[Ruleset + 0x68] + 0x38] + 0x68"`
-	ScoreV2             int32   `mem:"Ruleset + 0x100"`
-	Hit100              int16   `mem:"[[Ruleset + 0x68] + 0x38] + 0x88"`
-	Hit300              int16   `mem:"[[Ruleset + 0x68] + 0x38] + 0x8A"`
-	Hit50               int16   `mem:"[[Ruleset + 0x68] + 0x38] + 0x8C"`
-	HitGeki             int16   `mem:"[[Ruleset + 0x68] + 0x38] + 0x8E"`
-	HitKatu             int16   `mem:"[[Ruleset + 0x68] + 0x38] + 0x90"`
-	HitMiss             int16   `mem:"[[Ruleset + 0x68] + 0x38] + 0x92"`
-	Combo               int16   `mem:"[[Ruleset + 0x68] + 0x38] + 0x94"`
-	PlayerHPSmooth      float64 `mem:"[[Ruleset + 0x68] + 0x40] + 0x14"`
-	PlayerHP            float64 `mem:"[[Ruleset + 0x68] + 0x40] + 0x1C"`
-	Accuracy            float64 `mem:"[[Ruleset + 0x68] + 0x48] + 0xC"`
-	LeaderBoard         uint32  `mem:"[Ruleset + 0x7C] + 0x24"`
-	KeyOverlayArrayAddr uint32  `mem:"[[Ruleset + 0xB0] + 0x10] + 0x4"` //has to be at the end due to mem not liking dead pointers, TODO: Fix this mem-side
-	// Score               int32   `mem:"[[Ruleset + 0x68] + 0x38] + 0x78"`
+	Retries             int32   `mem:"[PlayerMode] + 0x8"`
+	PlayerName          string  `mem:"[[[Ruleset + 0x64] + 0x38] + 0x28]"`
+	ModsXor1            int32   `mem:"[[[Ruleset + 0x64] + 0x38] + 0x1C] + 0xC"`
+	ModsXor2            int32   `mem:"[[[Ruleset + 0x64] + 0x38] + 0x1C] + 0x8"`
+	HitErrors           []int32 `mem:"[[[Ruleset + 0x64] + 0x38] + 0x38]"`
+	Mode                int32   `mem:"[[Ruleset + 0x64] + 0x38] + 0x64"`
+	MaxCombo            int16   `mem:"[[Ruleset + 0x64] + 0x38] + 0x68"`
+	ScoreV2             int32   `mem:"Ruleset + 0xF8"`
+	Hit100              int16   `mem:"[[Ruleset + 0x64] + 0x38] + 0x88"`
+	Hit300              int16   `mem:"[[Ruleset + 0x64] + 0x38] + 0x8A"`
+	Hit50               int16   `mem:"[[Ruleset + 0x64] + 0x38] + 0x8C"`
+	HitGeki             int16   `mem:"[[Ruleset + 0x64] + 0x38] + 0x8E"`
+	HitKatu             int16   `mem:"[[Ruleset + 0x64] + 0x38] + 0x90"`
+	HitMiss             int16   `mem:"[[Ruleset + 0x64] + 0x38] + 0x92"`
+	Combo               int16   `mem:"[[Ruleset + 0x64] + 0x38] + 0x94"`
+	PlayerHPSmooth      float64 `mem:"[[Ruleset + 0x64] + 0x40] + 0x14"`
+	PlayerHP            float64 `mem:"[[Ruleset + 0x64] + 0x40] + 0x1C"`
+	Accuracy            float64 `mem:"[[Ruleset + 0x64] + 0x48] + 0xC"`
+	LeaderBoard         uint32  `mem:"[Ruleset + 0x78] + 0x24"`
+	KeyOverlayArrayAddr uint32  `mem:"[[Ruleset + 0xAC] + 0x10] + 0x4"` //has to be at the end due to mem not liking dead pointers, TODO: Fix this mem-side
+	// Score               int32   `mem:"[[Ruleset + 0x64] + 0x38] + 0x78"`
 }
