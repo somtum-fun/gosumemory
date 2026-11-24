@@ -1,3 +1,4 @@
+//go:build linux
 // +build linux
 
 package mem
@@ -8,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -99,13 +101,17 @@ func (p process) Maps() ([]Map, error) {
 	var maps []Map
 	s := bufio.NewScanner(f)
 	for s.Scan() {
-		var reg region
-		_, err := fmt.Sscanf(s.Text(), "%x-%x",
-			&reg.start, &reg.end)
+		var start, end uint64
+		_, err := fmt.Sscanf(s.Text(), "%x-%x", &start, &end)
 		if err != nil && err != io.EOF {
 			return nil, err
 		}
-		maps = append(maps, reg)
+		// Kernel mappings such as [vsyscall] (0xffffffffff600000) don't fit an int64 and are
+		// never osu!'s memory.
+		if end > math.MaxInt64 {
+			continue
+		}
+		maps = append(maps, region{start: int64(start), end: int64(end)})
 	}
 	return maps, nil
 }
