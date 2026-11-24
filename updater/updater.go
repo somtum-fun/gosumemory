@@ -12,7 +12,7 @@ import (
 	"github.com/skratchdot/open-golang/open"
 )
 
-const version = "1.3.9"
+const version = "1.3.9-somtum.1"
 
 // DoSelfUpdate updates the application
 func DoSelfUpdate() {
@@ -22,7 +22,7 @@ func DoSelfUpdate() {
 		log.Fatalln(err)
 	}
 	v := semver.MustParse(version)
-	latest, err := selfupdate.UpdateSelf(v, "l3lackShark/gosumemory")
+	latest, err := selfupdate.UpdateSelf(v, "somtum-fun/gosumemory") // osu!somtum fork: never update to upstream
 	if err != nil {
 		log.Println("Binary update failed:", err)
 		return

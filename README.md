@@ -1,3 +1,13 @@
+> **osu!somtum fork.** gosumemory for [osu!somtum](https://somtum.fun):
+> - works with osu!somtum's own stable client (`somtum-stable.exe`, stable40 and cuttingedge), and with
+>   its osu! folder outside the exe's (`somtum-stable.json`), as well as with osu!stable;
+> - pp, star rating and map stats come from [somtum-pp](https://github.com/somtum-fun/somtum-pp): the pp
+>   the somtum server pays, for every mode, with **Relax** and **Autopilot** (oppai-ng and gosu-pp are gone,
+>   so the pp counters need no cgo);
+> - gameplay offsets updated to current osu!stable;
+> - `GOSUMEMORY_PID=<pid>` pins one client when several are open (otherwise taken as a tournament);
+> - updates from [somtum-fun/gosumemory releases](https://github.com/somtum-fun/gosumemory/releases).
+
 <img src="https://i.imgur.com/SiRniTb.png" width="1000">
 
 Yet another memory reader for osu! Supports both Linux and Windows. (**requires sudo on Linux** though since only root can read /proc)
