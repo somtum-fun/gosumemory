@@ -1,5 +1,5 @@
-> **osu!somtum fork.** gosumemory for [osu!somtum](https://somtum.fun):
-> - works with osu!somtum's own stable client (`somtum-stable.exe`, stable40 and cuttingedge), and with
+> **somtum.fun fork.** gosumemory for [somtum.fun](https://somtum.fun):
+> - works with somtum.fun's own stable client (`somtum-stable.exe`, stable40 and cuttingedge), and with
 >   its osu! folder outside the exe's (`somtum-stable.json`), as well as with osu!stable;
 > - pp, star rating and map stats come from [somtum-pp](https://github.com/somtum-fun/somtum-pp): the pp
 >   the somtum server pays, for every mode, with **Relax** and **Autopilot** (oppai-ng and gosu-pp are gone,

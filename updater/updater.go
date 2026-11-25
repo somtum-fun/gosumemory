@@ -22,7 +22,7 @@ func DoSelfUpdate() {
 		log.Fatalln(err)
 	}
 	v := semver.MustParse(version)
-	latest, err := selfupdate.UpdateSelf(v, "somtum-fun/gosumemory") // osu!somtum fork: never update to upstream
+	latest, err := selfupdate.UpdateSelf(v, "somtum-fun/gosumemory") // somtum.fun fork: never update to upstream
 	if err != nil {
 		log.Println("Binary update failed:", err)
 		return

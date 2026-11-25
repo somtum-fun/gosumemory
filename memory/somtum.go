@@ -1,7 +1,7 @@
 package memory
 
-// osu!somtum: support for Somtum.Client (somtum-stable.exe), osu!stable recompiled for
-// osu!somtum (stable40 and cuttingedge). It is the same game underneath; three things differ:
+// somtum.fun: support for Somtum.Client (somtum-stable.exe), osu!stable recompiled for
+// somtum.fun (stable40 and cuttingedge). It is the same game underneath; three things differ:
 // the exe name, two signatures whose code JITs differently (same targets), and where the game
 // mode static sits next to Base. Checked on b20261118.1 stable40 and b20261118 cuttingedge.
 

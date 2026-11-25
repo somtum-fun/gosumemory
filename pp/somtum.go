@@ -1,5 +1,5 @@
 // Package pp fills gosumemory's pp, star rating and map stats from somtum-pp: the pp the
-// osu!somtum server pays, for every mode, with Relax (akatsuki osu_2019) and Autopilot. It
+// somtum.fun server pays, for every mode, with Relax (akatsuki osu_2019) and Autopilot. It
 // replaces oppai-ng and gosu-pp, so the package (and the pp counters) need no cgo.
 package pp
 
